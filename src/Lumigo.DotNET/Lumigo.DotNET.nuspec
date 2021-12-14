@@ -8,7 +8,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">Apache-2.0</license>
     <readme>README.md</readme>
-    <projectUrl>https://github.com/lumigo-io/dotnet-tracer</projectUrl>
+    <projectUrl>https://github.com/lumigo-io/lumigo-dotnet-tracer</projectUrl>
     <icon>icon.jpg</icon>
     <description>Lumigo DotNET Tracer</description>
     <copyright>$copyright$</copyright>
