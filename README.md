@@ -1,8 +1,8 @@
 # Lumigo .NET Tracer
 
-[![CircleCI](https://circleci.com/gh/lumigo-io/dotnet-tracer/tree/master.svg?style=svg&circle-token=96ef77fcbf5871cfcab9edb54e47248744383589)](https://circleci.com/gh/lumigo-io/dotnet-tracer/tree/master)
+[![CircleCI](https://circleci.com/gh/lumigo-io/lumigo-dotnet-tracer/tree/master.svg?style=svg&circle-token=ecd1acbb299c9ba28a7e0f6011fbfd1919079e36)](https://circleci.com/gh/lumigo-io/lumigo-dotnet-tracer/tree/master)
 [![Nuget](https://img.shields.io/nuget/v/Lumigo.DotNET.svg)](https://www.nuget.org/packages/Lumigo.DotNET)
-[![codecov](https://codecov.io/gh/lumigo-io/dotnet-tracer/branch/master/graph/badge.svg?token=IzEidxOAuM)](https://codecov.io/gh/lumigo-io/dotnet-tracer)
+[![codecov](https://codecov.io/gh/lumigo-io/lumigo-dotnet-tracer/branch/master/graph/badge.svg?token=CsQzn1kJle)](https://codecov.io/gh/lumigo-io/lumigo-dotnet-tracer)
 
 Supported Runtimes: .NET Core 2.1, .NET Core 3.1
 
