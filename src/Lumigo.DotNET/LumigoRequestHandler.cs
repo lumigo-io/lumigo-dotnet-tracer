@@ -32,7 +32,6 @@ namespace Lumigo.DotNET
             {
                 return;
             }
-
             try
             {
                 Logger.LogDebug("Start Lumigo tracer");
@@ -130,6 +129,7 @@ namespace Lumigo.DotNET
             {
                 return await handlerFunc();
             }
+
             TResponse response = default;
             try
             {
