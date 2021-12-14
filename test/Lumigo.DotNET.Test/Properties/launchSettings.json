@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "LumigoTestFunctions.Tests": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "_X_AMZN_TRACE_ID": "Root=1-60d1fee1-018c7b89064662e747081e6f;Parent=67cdf9ea1c14e641;Sampled=0",
+        "AWS_REGION": "eu-central-1",
+        "AWS_LAMBDA_FUNCTION_NAME": "lumigo-tracer-function",
+        "LAMBDA_RUNTIME_DIR": "/tmp"
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.1.26" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.7.0.55" />
+    <PackageReference Include="AWSSDK.Core" Version="3.7.2.6" />
+    <PackageReference Include="AWSSDK.Lambda" Version="3.7.3.3" />
+    <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.2.10" />
+    <PackageReference Include="AWSSDK.CloudWatchLogs" Version="3.7.1.29" />
+    <PackageReference Include="AWSSDK.CloudWatchEvents" Version="3.7.3.21" />
+    <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="3.7.1.26" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.2.25" />
+    <PackageReference Include="Amazon.AspNetCore.DataProtection.SSM" Version="2.1.0" />
+    <PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="2.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lumigo.DotNET.Parser\Lumigo.DotNET.Parser.csproj" />
+    <ProjectReference Include="..\Lumigo.DotNET.Utilities\Lumigo.DotNET.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">Apache-2.0</license>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/lumigo-io/dotnet-tracer</projectUrl>
+    <icon>icon.jpg</icon>
+    <description>Lumigo DotNET Tracer</description>
+    <copyright>$copyright$</copyright>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="13.0.1" />
+      <dependency id="AWSSDK.S3" version="3.7.1.26" />
+      <dependency id="AWSSDK.SQS" version="3.7.0.55" />
+      <dependency id="AWSSDK.Core" version="3.7.2.6" />
+      <dependency id="AWSSDK.Lambda" version="3.7.3.3" />
+      <dependency id="Amazon.Lambda.Core" version="2.0.0" />
+      <dependency id="AWSSDK.CloudWatch" version="3.7.2.10" />
+      <dependency id="Amazon.Lambda.S3Events" version="2.0.1" />
+      <dependency id="Amazon.Lambda.SNSEvents" version="2.0.0" />
+      <dependency id="Amazon.Lambda.LexEvents" version="3.0.0" />
+      <dependency id="Amazon.Lambda.SQSEvents" version="2.0.0" />
+      <dependency id="AWSSDK.CloudWatchLogs" version="3.7.1.29" />
+      <dependency id="AWSSDK.CloudWatchEvents" version="3.7.3.21" />
+      <dependency id="Amazon.Lambda.ConfigEvents" version="2.0.0" />
+      <dependency id="Amazon.Lambda.CognitoEvents" version="2.0.0" />
+      <dependency id="Amazon.Lambda.KinesisEvents" version="2.0.0" />
+      <dependency id="Amazon.Lambda.DynamoDBEvents" version="2.0.0" />
+      <dependency id="Amazon.Lambda.APIGatewayEvents" version="2.4.0" />
+      <dependency id="Amazon.Lambda.CloudWatchEvents" version="3.0.0" />
+      <dependency id="AWSSDK.CognitoIdentityProvider" version="3.7.1.26" />
+      <dependency id="Amazon.Lambda.CloudWatchLogsEvents" version="2.1.0" />
+      <dependency id="AWSSDK.SimpleNotificationService" version="3.7.2.25" />
+      <dependency id="Amazon.Lambda.KinesisFirehoseEvents" version="2.1.0" />
+      <dependency id="Amazon.AspNetCore.DataProtection.SSM" version="2.1.0" />
+      <dependency id="Amazon.Lambda.KinesisAnalyticsEvents" version="2.2.1" />
+      <dependency id="Amazon.Extensions.CognitoAuthentication" version="2.2.2" />
+    </dependencies>
+  </metadata>
+  <files>
+      <file src="..\..\README.md" target="" />
+      <file src="..\..\icon.jpg" target="" />
+  </files>
+</package>

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Lumigo.DotNET": {
+      "commandName": "Project",
+      "environmentVariables": {
+      }
+    }
+  }
+}

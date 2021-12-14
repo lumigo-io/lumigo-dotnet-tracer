@@ -1,0 +1,77 @@
+version: 2.1
+defaults: &defaults
+  working_directory: ~/dotnet-tracer
+  resource_class: small
+  docker:
+  - image: mcr.microsoft.com/dotnet/sdk:5.0
+
+orbs:
+  lumigo-orb: lumigo/lumigo-orb@volatile
+
+commands:
+  checkout_code:
+    description: "Checkout code and test it"
+    steps:
+      - checkout
+      - run:
+          # Avoid annoying double runs after deploy.
+          # See https://discuss.circleci.com/t/job-runs-even-when-tags-ignore-filter-is-triggered-when-combined-with-branches-only/20664
+          name: Check if tagged
+          command: |
+            tags=$(git tag -l --points-at HEAD)
+            echo "Tags $tags"
+            if [[ ! -z "$tags" ]]
+            then
+              echo "A tagged commit, skip..."
+              circleci step halt
+            fi 
+      - run:  wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+      - run: dpkg -i packages-microsoft-prod.deb
+      - run: apt-get update
+      - run: apt-get install -y dotnet-sdk-3.1
+      - run: apt install -y ssh
+      - run:
+          command: |
+            cd ..
+            git clone git@github.com:lumigo-io/utils.git
+
+workflows:
+  test-deploy:
+    jobs:
+    - test:
+        filters:
+          branches:
+            ignore: master
+    - lumigo-orb/be-deploy:
+        filters:
+          branches:
+            ignore: master
+        requires:
+          - test
+    - lumigo-orb/integration-test:
+        deploy_spec: default
+        tests_spec: testNormal
+        filters:
+          branches:
+            ignore: master
+        requires:
+          - lumigo-orb/be-deploy
+    - deploy:
+        filters:
+          branches:
+            only: master
+
+jobs:
+  test:
+    <<: *defaults
+    steps:
+      - checkout_code
+      - run: export PATH="$PATH:/root/.dotnet/tools" && ./scripts/checks.sh && ./scripts/run_coverage.sh
+
+  deploy:
+    <<: *defaults
+    resource_class: medium
+    steps:
+      - checkout_code
+      - run: dotnet pack src/Lumigo.DotNET/ -c Release
+      - run: ./scripts/bd_to_prod.sh
