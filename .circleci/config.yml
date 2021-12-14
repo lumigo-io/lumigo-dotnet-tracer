@@ -1,6 +1,6 @@
 version: 2.1
 defaults: &defaults
-  working_directory: ~/dotnet-tracer
+  working_directory: ~/lumigo-dotnet-tracer
   resource_class: small
   docker:
   - image: mcr.microsoft.com/dotnet/sdk:5.0
