@@ -129,6 +129,7 @@ namespace Lumigo.DotNET
             {
                 return await handlerFunc();
             }
+
             TResponse response = default;
             try
             {
