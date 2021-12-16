@@ -38,10 +38,7 @@ commands:
 workflows:
   test-deploy:
     jobs:
-    - test:
-        filters:
-          branches:
-            ignore: master
+    - test
     - lumigo-orb/be-deploy:
         filters:
           branches:
@@ -60,6 +57,8 @@ workflows:
         filters:
           branches:
             only: master
+        requires:
+          - test
 
 jobs:
   test:
