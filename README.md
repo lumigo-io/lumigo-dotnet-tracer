@@ -45,6 +45,10 @@ public class Function : LumigoRequestHandler
     }
 ```
 
+### Connect Your Lumigo Account
+
+Add `LUMIGO_TRACER_TOKEN` environment variable to connect the tracing to your Lumigo account.
+
 ### Track HTTP Requests
 To track HTTP requests add `UseLumigo` to the HTTP client:
 ```csharp
@@ -52,7 +56,3 @@ using Lumigo.DotNET.Utilities.Extensions;
 ...
     var httpClient = new HttpClient().UseLumigo();
 ```
-
-### Connect Your Lumigo Account
-
-Add `LUMIGO_TRACER_TOKEN` environment variable to connect the tracing to your Lumigo account.
