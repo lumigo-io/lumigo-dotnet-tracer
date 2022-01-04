@@ -23,6 +23,30 @@ Install-Package Lumigo.DotNET
 
 Wrap your lambda function by implementing a supplier which contains your code:
 
+#### sync handler:
+```csharp
+using Lumigo.DotNET;
+using Lumigo.DotNET.Instrumentation;
+...
+public class Function : LumigoRequestHandler
+    {
+        public Function()
+        {
+            LumigoBootstrap.Bootstrap();
+        }
+
+        public Response FunctionHandler(string input, ILambdaContext context)
+        {
+            return Handle(input, context, () =>
+            {
+                //Your lambda code
+                //return <result>; - For void functions remove the return statements
+            });
+        }
+    }
+```
+
+#### async handler:
 ```csharp
 using Lumigo.DotNET;
 using Lumigo.DotNET.Instrumentation;
