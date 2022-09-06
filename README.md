@@ -8,8 +8,8 @@
 Easily trace your .NET Lambda functions using the [Lumigo platform](https://platform.lumigo.io/) 🚀
 
 ## Supported Runtimes
-* .NET Core 2.1
 * .NET Core 3.1
+* .NET 6
 
 ## Setup
 
