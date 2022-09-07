@@ -6,7 +6,7 @@ defaults: &defaults
   - image: mcr.microsoft.com/dotnet/sdk:5.0
 
 orbs:
-  lumigo-orb: lumigo/lumigo-orb@dev:6f60824
+  lumigo-orb: lumigo/lumigo-orb@volatile
 
 commands:
   checkout_code:
