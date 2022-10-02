@@ -9,13 +9,16 @@ Easily trace your .NET Lambda functions using the [Lumigo platform](https://plat
 
 ## Supported Runtimes
 * .NET Core 3.1
+* .NET 6
 
 ## Setup
 
 ### Installation
+
 Add the Lumigo tracer package via NuGet by running:
+
 ```bash
-Install-Package Lumigo.DotNET
+dotnet add package Lumigo.DotNET
 ```
 
 ### Wrapping Your Lambda
@@ -74,8 +77,37 @@ Add `LUMIGO_TRACER_TOKEN` environment variable to connect the tracing to your Lu
 
 ### Track HTTP Requests
 To track HTTP requests add `UseLumigo` to the HTTP client:
+
 ```csharp
+using Amazon.Lambda.Core;
+
+using Lumigo.DotNET;
+using Lumigo.DotNET.Instrumentation;
 using Lumigo.DotNET.Utilities.Extensions;
-...
-    var httpClient = new HttpClient().UseLumigo();
+
+using System.Net.Http;
+
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
+
+namespace HelloDotNet6 {
+
+    public class Function : LumigoRequestHandler
+    {
+        public Function()
+        {
+            LumigoBootstrap.Bootstrap();
+        }
+
+        public async Task<string> Handler(string input, ILambdaContext context)
+        {
+            return await Handle(input, context, async () =>
+                {
+                    HttpResponseMessage response = await new HttpClient().UseLumigo().GetAsync("https://httpbin.org/status/200");
+                    response.EnsureSuccessStatusCode();
+                    return "\"Hello world\"";
+                }
+            );
+        }
+    }
+}
 ```
