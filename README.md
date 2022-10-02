@@ -1,6 +1,4 @@
-<p align="center">
-    <img src="lumigo-logo.png"/>
-</p>
+![Lumigo.io](lumigo-logo.png)
 
 [![CircleCI](https://circleci.com/gh/lumigo-io/lumigo-dotnet-tracer/tree/master.svg?style=svg&circle-token=ecd1acbb299c9ba28a7e0f6011fbfd1919079e36)](https://circleci.com/gh/lumigo-io/lumigo-dotnet-tracer/tree/master)
 [![Nuget](https://img.shields.io/nuget/v/Lumigo.DotNET.svg)](https://www.nuget.org/packages/Lumigo.DotNET)
