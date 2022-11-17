@@ -68,6 +68,8 @@ namespace Lumigo.DotNET.Parser.Spans
         [JsonProperty("parentId")]
         public string ParentId { get; set; }
 
+        [JsonProperty("lumigo_execution_tags_no_scrub")]
+        public List<ExecutionTag> ExecutionTags { get; set; }
 
         public class InfoModel
         {
@@ -113,6 +115,16 @@ namespace Lumigo.DotNET.Parser.Spans
 
             [JsonProperty("region")]
             public string Region { get; set; }
+        }
+
+        public class ExecutionTag
+        {
+
+            [JsonProperty("key")]
+            public string Key { get; set; }
+
+            [JsonProperty("value")]
+            public string Value { get; set; }
         }
 
         public class TracerModel
