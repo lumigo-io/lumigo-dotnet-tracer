@@ -23,7 +23,8 @@ dotnet add package Lumigo.DotNET
 
 Wrap your lambda function by implementing a supplier which contains your code:
 
-#### sync handler:
+#### Synchronous handler
+
 ```csharp
 using Lumigo.DotNET;
 using Lumigo.DotNET.Instrumentation;
@@ -46,7 +47,8 @@ public class Function : LumigoRequestHandler
     }
 ```
 
-#### async handler:
+#### Asynchronous handler
+
 ```csharp
 using Lumigo.DotNET;
 using Lumigo.DotNET.Instrumentation;
@@ -69,8 +71,13 @@ public class Function : LumigoRequestHandler
     }
 ```
 
-### Add ExecutionTags
-To add Execution tags use `AddExecutionTag`:
+### Execution Tags
+
+Execution tags allow you to dynamically add dimensions to your Lambda function invocations so that they can be identified, searched for, and filtered in Lumigo. 
+They can be utilized to find specific invocations and create custom widgets, helping you simplify the complexity of monitoring distributed applications.
+The [Quick Bytes video for Execution Tags](https://docs.lumigo.io/docs/execution-tags#lumigo-quick-bytes---execution-tags) video gives examples of use-cases for execution tags.
+
+Adding an execution tag to a Lambda invocation is done via the `LumigoRequestHandler.AddExecutionTag` API:
 
 ```csharp
 using Amazon.Lambda.Core;
@@ -97,6 +104,7 @@ namespace HelloDotNet6 {
             return await Handle(input, context, async () =>
                 {
                     this.AddExecutionTag("Key1", "Value1");
+
                     return "\"Hello world\"";
                 }
             );
@@ -105,6 +113,43 @@ namespace HelloDotNet6 {
 }
 ```
 
+It is possible to set multiple execution tags for the same Lambda invocation, as well as multiple values for the same execution tag:
+
+```csharp
+using Amazon.Lambda.Core;
+
+using Lumigo.DotNET;
+using Lumigo.DotNET.Instrumentation;
+using Lumigo.DotNET.Utilities.Extensions;
+
+using System.Net.Http;
+
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
+
+namespace HelloDotNet6 {
+
+    public class Function : LumigoRequestHandler
+    {
+        public Function()
+        {
+            LumigoBootstrap.Bootstrap();
+        }
+
+        public async Task<string> Handler(string input, ILambdaContext context)
+        {
+            return await Handle(input, context, async () =>
+                {
+                    this.AddExecutionTag("Key1", "Value1");
+                    this.AddExecutionTag("Key2", "Value2");
+                    this.AddExecutionTag("Key2", "Value3");
+
+                    return "\"Hello world\"";
+                }
+            );
+        }
+    }
+}
+```
 
 ### Connect Your Lumigo Account
 
