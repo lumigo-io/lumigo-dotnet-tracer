@@ -69,6 +69,43 @@ public class Function : LumigoRequestHandler
     }
 ```
 
+### Add ExecutionTags
+To add Execution tags use `AddExecutionTag`:
+
+```csharp
+using Amazon.Lambda.Core;
+
+using Lumigo.DotNET;
+using Lumigo.DotNET.Instrumentation;
+using Lumigo.DotNET.Utilities.Extensions;
+
+using System.Net.Http;
+
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
+
+namespace HelloDotNet6 {
+
+    public class Function : LumigoRequestHandler
+    {
+        public Function()
+        {
+            LumigoBootstrap.Bootstrap();
+        }
+
+        public async Task<string> Handler(string input, ILambdaContext context)
+        {
+            return await Handle(input, context, async () =>
+                {
+                    this.AddExecutionTag("Key1", "Value1");
+                    return "\"Hello world\"";
+                }
+            );
+        }
+    }
+}
+```
+
+
 ### Connect Your Lumigo Account
 
 Add `LUMIGO_TRACER_TOKEN` environment variable to connect the tracing to your Lumigo account.
