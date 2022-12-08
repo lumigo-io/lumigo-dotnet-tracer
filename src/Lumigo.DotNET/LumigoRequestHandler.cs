@@ -173,5 +173,10 @@ namespace Lumigo.DotNET
                 throw;
             }
         }
+
+        public void AddExecutionTag(String key, String value)
+        {
+            SpansContainer.GetInstance().AddExecutionTag(key, value);
+        }
     }
 }
