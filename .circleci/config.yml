@@ -1,12 +1,13 @@
 version: 2.1
+
+orbs:
+  lumigo-orb: &lumigo_orb_version lumigo/lumigo-orb@volatile
+
 defaults: &defaults
   working_directory: ~/lumigo-dotnet-tracer
   resource_class: small
   docker:
   - image: mcr.microsoft.com/dotnet/sdk:5.0
-
-orbs:
-  lumigo-orb: lumigo/lumigo-orb@volatile
 
 commands:
   checkout_code:
@@ -16,7 +17,7 @@ commands:
       - run:
           # Avoid annoying double runs after deploy.
           # See https://discuss.circleci.com/t/job-runs-even-when-tags-ignore-filter-is-triggered-when-combined-with-branches-only/20664
-          name: Check if tagged
+          name: Stop deployment on tagged commits to avoid double-runs
           command: |
             tags=$(git tag -l --points-at HEAD)
             echo "Tags $tags"
@@ -24,35 +25,66 @@ commands:
             then
               echo "A tagged commit, skip..."
               circleci step halt
-            fi 
-      - run:  wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+            fi
+      - run: wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
       - run: dpkg -i packages-microsoft-prod.deb
       - run: apt-get update
       - run: apt-get install -y dotnet-sdk-3.1
       - run: apt install -y ssh
       - run:
+          name: Clone utils repository
           command: |
             cd ..
             git clone git@github.com:lumigo-io/utils.git
 
+            # attempt to checkout the matching branch if it exists
+            cd utils
+            git checkout "$CIRCLE_BRANCH" || true
+
 workflows:
   test-deploy:
     jobs:
+    - lumigo-orb/print_orb_versions:
+        lumigo_orb_version: *lumigo_orb_version
     - test
+    - lumigo-orb/is_environment_available
     - lumigo-orb/be-deploy:
         filters:
           branches:
             ignore: master
         requires:
           - test
-    - lumigo-orb/integration-test:
+          - lumigo-orb/is_environment_available
+    - lumigo-orb/integration-test-prep:
+        deploy_spec: default
+        filters:
+          branches:
+            ignore: master
+        requires:
+          - lumigo-orb/be-deploy
+    - lumigo-orb/integration-test-limited-flows:
         deploy_spec: default
         tests_spec: testNormal
         filters:
           branches:
             ignore: master
         requires:
-          - lumigo-orb/be-deploy
+          - lumigo-orb/integration-test-prep
+    - lumigo-orb/integration-test-parallel:
+        deploy_spec: default
+        tests_spec: testNormal
+        filters:
+          branches:
+            ignore: master
+        requires:
+          - lumigo-orb/integration-test-limited-flows
+    - lumigo-orb/workflow-completed-successfully:
+        filters:
+          branches:
+            ignore: master
+        requires:
+          - lumigo-orb/integration-test-parallel
+
     - deploy:
         filters:
           branches:
@@ -65,7 +97,12 @@ jobs:
     <<: *defaults
     steps:
       - checkout_code
-      - run: export PATH="$PATH:/root/.dotnet/tools" && ./scripts/checks.sh && ./scripts/run_coverage.sh
+      - run:
+          name: run tests
+          command: |
+            export PATH="$PATH:/root/.dotnet/tools"
+            ./scripts/checks.sh
+            ./scripts/run_coverage.sh
 
   deploy:
     <<: *defaults
