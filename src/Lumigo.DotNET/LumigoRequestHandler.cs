@@ -7,6 +7,7 @@ using Lumigo.DotNET.Utilities.Network;
 
 namespace Lumigo.DotNET
 {
+
     public class LumigoRequestHandler
     {
         private readonly Reporter reporter;
