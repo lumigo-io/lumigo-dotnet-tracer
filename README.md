@@ -31,11 +31,6 @@ using Lumigo.DotNET.Instrumentation;
 ...
 public class Function : LumigoRequestHandler
     {
-        public Function()
-        {
-            LumigoBootstrap.Bootstrap();
-        }
-
         public Response FunctionHandler(string input, ILambdaContext context)
         {
             return Handle(input, context, () =>
@@ -55,11 +50,6 @@ using Lumigo.DotNET.Instrumentation;
 ...
 public class Function : LumigoRequestHandler
     {
-        public Function()
-        {
-            LumigoBootstrap.Bootstrap();
-        }
-
         public async Task<Response> FunctionHandler(string input, ILambdaContext context)
         {
             return await Handle(input, context, async () =>
@@ -94,11 +84,6 @@ namespace HelloDotNet6 {
 
     public class Function : LumigoRequestHandler
     {
-        public Function()
-        {
-            LumigoBootstrap.Bootstrap();
-        }
-
         public async Task<string> Handler(string input, ILambdaContext context)
         {
             return await Handle(input, context, async () =>
@@ -130,11 +115,6 @@ namespace HelloDotNet6 {
 
     public class Function : LumigoRequestHandler
     {
-        public Function()
-        {
-            LumigoBootstrap.Bootstrap();
-        }
-
         public async Task<string> Handler(string input, ILambdaContext context)
         {
             return await Handle(input, context, async () =>
@@ -173,11 +153,6 @@ namespace HelloDotNet6 {
 
     public class Function : LumigoRequestHandler
     {
-        public Function()
-        {
-            LumigoBootstrap.Bootstrap();
-        }
-
         public async Task<string> Handler(string input, ILambdaContext context)
         {
             return await Handle(input, context, async () =>
