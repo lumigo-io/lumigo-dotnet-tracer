@@ -63,8 +63,8 @@ namespace Lumigo.DotNET
             {
                 try
                 {
-                    Logger.LogDebug(string.Format("Customer lambda had exception {}", e.Message));
                     spansContainer.EndWithException(e).GetAwaiter().GetResult();
+                    Logger.LogDebug(string.Format("Customer lambda had exception {0}", e.Message));
                 }
                 catch (Exception ex)
                 {
@@ -112,8 +112,8 @@ namespace Lumigo.DotNET
             {
                 try
                 {
-                    Logger.LogDebug(string.Format("Customer lambda had exception {}", e.Message));
                     spansContainer.EndWithException(e).GetAwaiter().GetResult();
+                    Logger.LogDebug(string.Format("Customer lambda had exception {0}", e.Message));
                 }
                 catch (Exception ex)
                 {
