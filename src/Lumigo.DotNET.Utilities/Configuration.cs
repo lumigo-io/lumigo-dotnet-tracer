@@ -19,6 +19,7 @@ namespace Lumigo.DotNET.Utilities
         public static readonly string LUMIGO_MAX_ENTRY_SIZE = "LUMIGO_MAX_ENTRY_SIZE";
         public static readonly string LUMIGO_INSTRUMENTATION = "LUMIGO_INSTRUMENTATION";
         public static readonly string LUMIGO_MAX_RESPONSE_SIZE = "LUMIGO_MAX_RESPONSE_SIZE";
+        public static readonly string LUMIGO_MAX_EXECUTION_TAGS = "LUMIGO_MAX_EXECUTION_TAGS";
         public static readonly string LUMIGO_USE_TRACER_EXTENSION = "LUMIGO_USE_TRACER_EXTENSION";
 
         private static Configuration instance;
@@ -44,6 +45,11 @@ namespace Lumigo.DotNET.Utilities
             return envUtil.GetIntegerEnv(LUMIGO_MAX_RESPONSE_SIZE, 1024 * 900);
         }
 
+        public int MaxExecutionTags()
+        {
+            return envUtil.GetIntegerEnv(LUMIGO_MAX_EXECUTION_TAGS, 50);
+        }
+
         public string GetLumigoToken()
         {
             return envUtil.GetEnv(TOKEN_KEY);
@@ -51,7 +57,7 @@ namespace Lumigo.DotNET.Utilities
 
         public string GetLumigoTracerVersion()
         {
-            return "1.0.38";  // Being updated from .bumpversion.cfg
+            return "1.0.43";  // Being updated from .bumpversion.cfg
         }
 
         public bool DebugMode

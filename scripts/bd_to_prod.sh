@@ -57,5 +57,8 @@ mono /usr/local/bin/nuget.exe pack src/Lumigo.DotNET/ -Prop Configuration=Releas
 echo "Pushing..."
 mono /usr/local/bin/nuget.exe push *.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${NUGET_KEY} -NonInteractive
 push_tags
-echo \{\"type\":\"Release\",\"repo\":\"${CIRCLE_PROJECT_REPONAME}\",\"buildUrl\":\"${CIRCLE_BUILD_URL}\"\} | curl -X POST "https://listener.logz.io:8071?token=${LOGZ}" -v --data-binary @-
+
+source ../utils/common_bash/functions.sh
+send_metric_to_logz_io type=\"Release\"
+
 echo "Done"

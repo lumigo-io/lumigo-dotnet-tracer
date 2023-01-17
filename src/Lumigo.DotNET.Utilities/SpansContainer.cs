@@ -12,6 +12,7 @@ using Lumigo.DotNET.Parser.Spans;
 using Lumigo.DotNET.Utilities.Models;
 using Lumigo.DotNET.Utilities.Network;
 using Lumigo.DotNET.Utilities.Extensions;
+using static Lumigo.DotNET.Parser.Spans.Span;
 
 namespace Lumigo.DotNET.Utilities
 {
@@ -19,6 +20,7 @@ namespace Lumigo.DotNET.Utilities
     {
         private readonly int MAX_STRING_SIZE = Configuration.GetInstance().MaxSpanFieldSize();
         private readonly int MAX_REQUEST_SIZE = Configuration.GetInstance().MaxRequestSize();
+        private readonly int MAX_EXECUTION_TAGS = Configuration.GetInstance().MaxExecutionTags();
         private const int MAX_LAMBDA_TIME = 15 * 60 * 1000;
         private const string AWS_EXECUTION_ENV = "AWS_EXECUTION_ENV";
         private const string AWS_REGION = "AWS_REGION";
@@ -33,6 +35,7 @@ namespace Lumigo.DotNET.Utilities
         private Reporter Reporter;
         private List<HttpSpan> HttpSpans = new List<HttpSpan>();
         private EnvUtil EnvUtil = new EnvUtil();
+        private List<ExecutionTag> ExecutionTags = new List<ExecutionTag>();
 
         private static SpansContainer OurInstance = new SpansContainer();
         JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings { ContractResolver = new IgnoreStreamsResolver() };
@@ -51,6 +54,7 @@ namespace Lumigo.DotNET.Utilities
             EndFunctionSpan = null;
             Reporter = null;
             HttpSpans = new List<HttpSpan>();
+            ExecutionTags = new List<ExecutionTag>();
         }
 
         public void Init(Reporter reporter, ILambdaContext context, object evnt)
@@ -154,6 +158,7 @@ namespace Lumigo.DotNET.Utilities
             endFunctionSpan.ReporterRTT = RttDuration;
             endFunctionSpan.Ended = DateTime.UtcNow.ToMilliseconds();
             endFunctionSpan.Id = BaseSpan.Id;
+            endFunctionSpan.ExecutionTags = this.ExecutionTags;
             EndFunctionSpan = endFunctionSpan;
             await Reporter.ReportSpans(PrepareToSend(GetAllCollectedSpans(), EndFunctionSpan.Error != null), MAX_REQUEST_SIZE);
         }
@@ -229,6 +234,14 @@ namespace Lumigo.DotNET.Utilities
             spans.AddRange(HttpSpans);
             spans.Add(EndFunctionSpan);
             return spans;
+        }
+
+        public void AddExecutionTag(string key, string value)
+        {
+            if (this.ExecutionTags.Count() < this.MAX_EXECUTION_TAGS)
+            {
+                this.ExecutionTags.Add(new ExecutionTag() { Key = key, Value = value });
+            }
         }
 
         private HttpSpan CreateBaseHttpSpan(long startTime) => new HttpSpan
