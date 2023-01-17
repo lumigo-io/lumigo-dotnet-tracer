@@ -55,11 +55,24 @@ namespace Lumigo.DotNET.Utilities
 
         public void Init(Reporter reporter, ILambdaContext context, object evnt)
         {
+            try
+            {
+                Logger.LogDebug("ENVIRONMENT VARIABLES: " +
+                                JsonConvert.SerializeObject(Environment.GetEnvironmentVariables()));
+                Logger.LogDebug("CONTEXT: " + JsonConvert.SerializeObject(context));
+                Logger.LogDebug("EVENT: " + JsonConvert.SerializeObject(evnt));
+                Logger.LogDebug("REPORTER: " + JsonConvert.SerializeObject(reporter));
+            } catch (Exception e)
+            {
+                Logger.LogError(e, "Failed to log init data");
+            }
+
             this.Clear();
             this.Reporter = reporter;
             var awsTracerId = EnvUtil.GetEnv(AMZN_TRACE_ID);
             TriggeredByModel triggeredBy = AwsUtils.ExtractTriggeredByFromEvent(evnt);
             long startTime = DateTime.UtcNow.ToMilliseconds();
+            Logger.LogDebug("Start Init Span");
             this.BaseSpan = new Span
             {
                 Token = Configuration.GetInstance().GetLumigoToken(),
@@ -102,6 +115,7 @@ namespace Lumigo.DotNET.Utilities
                 Event = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EventParserFactory.ParseEvent(evnt)) : null
 
             };
+            Logger.LogDebug("Finish Init Span");
         }
 
         public async Task Start()
