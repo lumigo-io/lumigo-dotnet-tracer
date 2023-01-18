@@ -311,30 +311,43 @@ namespace Lumigo.DotNET.Utilities
 
         public void AddHttpSpan(long startTime, string requestUri, string method, HttpContent request, HttpResponseMessage response)
         {
-            if (!CanAddHttpSpan())
+            if (IsBaseSpanInitiated())
             {
-                return;
-            }
-            HttpSpan httpSpan = CreateBaseHttpSpan(startTime);
-            httpSpan.Info.HttpInfo = new HttpSpan.HttpInfoModel
-            {
-                Host = requestUri,
-                Request = new HttpSpan.HttpDataModel
+                if (!CanAddHttpSpan())
                 {
-                    Headers = request == null ? ExtractHeaders(new HttpClient().DefaultRequestHeaders.ToDictionary(a => a.Key, a => string.Join(";", a.Value))) : ExtractHeaders(request.Headers.ToDictionary(a => a.Key, a => string.Join(";", a.Value))),
-                    Uri = requestUri,
-                    Method = method,
-                    Body = request == null ? null : ExtractBodyFromRequest(request),
-                },
-                Response = new HttpSpan.HttpDataModel
-                {
-                    Headers = ExtractHeaders(response.Headers.ToDictionary(a => a.Key, a => string.Join(";", a.Value))),
-                    Body = ExtractBodyFromResponse(response),
-                    StatusCode = (int)response.StatusCode
+                    return;
                 }
-            };
-            ReduceSpanSize(httpSpan, false);
-            HttpSpans.Add(httpSpan);
+
+                HttpSpan httpSpan = CreateBaseHttpSpan(startTime);
+                httpSpan.Info.HttpInfo = new HttpSpan.HttpInfoModel
+                {
+                    Host = requestUri,
+                    Request = new HttpSpan.HttpDataModel
+                    {
+                        Headers = request == null
+                            ? ExtractHeaders(
+                                new HttpClient().DefaultRequestHeaders.ToDictionary(a => a.Key,
+                                    a => string.Join(";", a.Value)))
+                            : ExtractHeaders(request.Headers.ToDictionary(a => a.Key, a => string.Join(";", a.Value))),
+                        Uri = requestUri,
+                        Method = method,
+                        Body = request == null ? null : ExtractBodyFromRequest(request),
+                    },
+                    Response = new HttpSpan.HttpDataModel
+                    {
+                        Headers = ExtractHeaders(response.Headers.ToDictionary(a => a.Key,
+                            a => string.Join(";", a.Value))),
+                        Body = ExtractBodyFromResponse(response),
+                        StatusCode = (int)response.StatusCode
+                    }
+                };
+                ReduceSpanSize(httpSpan, false);
+                HttpSpans.Add(httpSpan);
+            }
+            else
+            {
+                Logger.LogDebug("Couldn't add HttpSpan because BaseSpan isn't initiated. probably this request happened before the handler is called");
+            }
         }
 
         private static string ExtractHeaders(Dictionary<string, string> headers)
