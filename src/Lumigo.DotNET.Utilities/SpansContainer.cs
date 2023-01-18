@@ -59,11 +59,24 @@ namespace Lumigo.DotNET.Utilities
 
         public void Init(Reporter reporter, ILambdaContext context, object evnt)
         {
+            try
+            {
+                Logger.LogDebug("ENVIRONMENT VARIABLES: " +
+                                JsonConvert.SerializeObject(Environment.GetEnvironmentVariables()));
+                Logger.LogDebug("CONTEXT: " + JsonConvert.SerializeObject(context));
+                Logger.LogDebug("EVENT: " + JsonConvert.SerializeObject(evnt));
+                Logger.LogDebug("REPORTER: " + JsonConvert.SerializeObject(reporter));
+            } catch (Exception e)
+            {
+                Logger.LogError(e, "Failed to log init data");
+            }
+
             this.Clear();
             this.Reporter = reporter;
             var awsTracerId = EnvUtil.GetEnv(AMZN_TRACE_ID);
             TriggeredByModel triggeredBy = AwsUtils.ExtractTriggeredByFromEvent(evnt);
             long startTime = DateTime.UtcNow.ToMilliseconds();
+            Logger.LogDebug("Start Init Span");
             this.BaseSpan = new Span
             {
                 Token = Configuration.GetInstance().GetLumigoToken(),
@@ -106,6 +119,7 @@ namespace Lumigo.DotNET.Utilities
                 Event = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EventParserFactory.ParseEvent(evnt)) : null
 
             };
+            Logger.LogDebug("Finish Init Span");
         }
 
         public async Task Start()
@@ -158,6 +172,11 @@ namespace Lumigo.DotNET.Utilities
                 Stacktrace = e.StackTrace
             };
             await End(BaseSpan);
+        }
+
+        public bool IsBaseSpanInitiated()
+        {
+            return BaseSpan != null;
         }
 
 
@@ -256,30 +275,38 @@ namespace Lumigo.DotNET.Utilities
 
         public void AddHttpSpan(IExecutionContext executionContext, object result = null, long startTime = 0)
         {
-            if (startTime == 0)
-                startTime = DateTime.UtcNow.ToMilliseconds();
-            HttpSpan httpSpan = CreateBaseHttpSpan(startTime);
-
-            httpSpan.Info.HttpInfo = new HttpSpan.HttpInfoModel
+            if (IsBaseSpanInitiated())
             {
-                Host = executionContext?.RequestContext?.Request?.Endpoint?.Host,
-                Request = new HttpSpan.HttpDataModel
-                {
-                    Headers = JsonConvert.SerializeObject(executionContext?.RequestContext?.Request?.Headers),
-                    Uri = executionContext?.RequestContext?.Request?.Endpoint?.AbsoluteUri,
-                    Method = executionContext?.RequestContext?.Request?.HttpMethod,
-                    Body = executionContext?.RequestContext?.Request?.Content == null ? null : Encoding.UTF8.GetString(executionContext.RequestContext.Request.Content, 0, executionContext.RequestContext.Request.Content.Length)
+                if (startTime == 0)
+                    startTime = DateTime.UtcNow.ToMilliseconds();
+                HttpSpan httpSpan = CreateBaseHttpSpan(startTime);
 
-                },
-                Response = new HttpSpan.HttpDataModel
+                httpSpan.Info.HttpInfo = new HttpSpan.HttpInfoModel
                 {
-                    StatusCode = executionContext?.ResponseContext?.HttpResponse?.StatusCode == null ? 0 : (int)executionContext?.ResponseContext?.HttpResponse?.StatusCode,
-                    Method = executionContext?.RequestContext?.Request?.HttpMethod,
-                    Uri = executionContext?.RequestContext?.Request?.Endpoint?.AbsoluteUri,
-                    Body = result != null ? JsonConvert.SerializeObject(result, jsonSerializerSettings) : null
-                }
-            };
-            HttpSpans.Add(httpSpan);
+                    Host = executionContext?.RequestContext?.Request?.Endpoint?.Host,
+                    Request = new HttpSpan.HttpDataModel
+                    {
+                        Headers = JsonConvert.SerializeObject(executionContext?.RequestContext?.Request?.Headers),
+                        Uri = executionContext?.RequestContext?.Request?.Endpoint?.AbsoluteUri,
+                        Method = executionContext?.RequestContext?.Request?.HttpMethod,
+                        Body = executionContext?.RequestContext?.Request?.Content == null ? null : Encoding.UTF8.GetString(executionContext.RequestContext.Request.Content, 0, executionContext.RequestContext.Request.Content.Length)
+
+                    },
+                    Response = new HttpSpan.HttpDataModel
+                    {
+                        StatusCode = executionContext?.ResponseContext?.HttpResponse?.StatusCode == null ? 0 : (int)executionContext?.ResponseContext?.HttpResponse?.StatusCode,
+                        Method = executionContext?.RequestContext?.Request?.HttpMethod,
+                        Uri = executionContext?.RequestContext?.Request?.Endpoint?.AbsoluteUri,
+                        Body = result != null ? JsonConvert.SerializeObject(result, jsonSerializerSettings) : null
+                    }
+                };
+                HttpSpans.Add(httpSpan);
+            }
+            else
+            {
+                Logger.LogDebug("Couldn't add HttpSpan because BaseSpan isn't initiated. probably this request happened before the handler is called");
+            }
+            
         }
 
         public void AddHttpSpan(long startTime, string requestUri, string method, HttpContent request, HttpResponseMessage response)
