@@ -1,6 +1,6 @@
 ![Lumigo.io](lumigo-logo.png)
 
-[![CircleCI](https://circleci.com/gh/lumigo-io/lumigo-dotnet-tracer/tree/master.svg?style=svg&circle-token=ecd1acbb299c9ba28a7e0f6011fbfd1919079e36)](https://circleci.com/gh/lumigo-io/lumigo-dotnet-tracer/tree/master)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/lumigo-io/lumigo-dotnet-tracer/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/lumigo-io/lumigo-dotnet-tracer/tree/master)
 [![Nuget](https://img.shields.io/nuget/v/Lumigo.DotNET.svg)](https://www.nuget.org/packages/Lumigo.DotNET)
 
 Easily trace your .NET Lambda functions using the [Lumigo platform](https://platform.lumigo.io/) 🚀
