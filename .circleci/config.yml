@@ -47,12 +47,11 @@ workflows:
     - lumigo-orb/print_orb_versions:
         lumigo_orb_version: *lumigo_orb_version
 
-    - lumigo-orb/test:
+    - test:
         context: 
           - common
           - nuget
-        name: lumigo-orb/test
-        docker_image: lumigo/python-39-ci:latest
+        name: test
 
     - lumigo-orb/is_environment_available:
         context: common
@@ -97,7 +96,7 @@ workflows:
     - lumigo-orb/workflow-completed-successfully:
         context: common
         requires:
-          - lumigo-orb/test
+          - test
           - lumigo-orb/integration-test-parallel
           - lumigo-orb/e2e-test
 
@@ -109,7 +108,7 @@ workflows:
           branches:
             only: master
         requires:
-          - lumigo-orb/test
+          - test
 
 jobs:
   test:
