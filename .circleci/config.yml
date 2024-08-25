@@ -51,7 +51,7 @@ workflows:
         context: 
           - common
           - nuget
-        name: lumigo-orb/test/3.9
+        name: lumigo-orb/test
         docker_image: lumigo/python-39-ci:latest
 
     - lumigo-orb/is_environment_available:
