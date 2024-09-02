@@ -38,7 +38,11 @@ namespace Lumigo.DotNET.Utilities
         private List<ExecutionTag> ExecutionTags = new List<ExecutionTag>();
 
         private static SpansContainer OurInstance = new SpansContainer();
-        JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings { ContractResolver = new IgnoreStreamsResolver() };
+        JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new IgnoreStreamsResolver(),
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        };
 
 
         public static SpansContainer GetInstance()
@@ -116,7 +120,7 @@ namespace Lumigo.DotNET.Utilities
                 Type = FUNCTION_SPAN_TYPE,
                 Readiness = AwsUtils.GetFunctionReadiness(),
                 Envs = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EnvUtil.GetAll()) : null,
-                Event = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EventParserFactory.ParseEvent(evnt)) : null
+                Event = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EventParserFactory.ParseEvent(evnt), JsonSerializerSettings) : null
 
             };
             Logger.LogDebug("Finish Init Span");
@@ -142,7 +146,7 @@ namespace Lumigo.DotNET.Utilities
         {
             Logger.LogDebug(response.ToString());
             BaseSpan.Id = BaseSpan.Id.Replace("_started", "");
-            BaseSpan.ReturnValue = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(response) : null;
+            BaseSpan.ReturnValue = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(response, JsonSerializerSettings) : null;
             await End(BaseSpan);
         }
         public async Task End()
