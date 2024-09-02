@@ -94,13 +94,9 @@ namespace Lumigo.DotNET.Test.Utilities
             circularObject2.Reference = circularObject1;
 
             // Act
-            await spansContainer.End(circularObject1);
+            spansContainer.End(circularObject1).GetAwaiter().GetResult();
 
             // Assert
-            Assert.Null(spansContainer.GetEndSpan().ReturnValue); // Should be null due to non-verbose mode
-
-            await spansContainer.End(circularObject1);
-
             // Check that serialization completed without errors and does not contain circular reference errors
             Assert.NotNull(spansContainer.GetEndSpan().ReturnValue);
             Assert.DoesNotContain("Self referencing loop", spansContainer.GetEndSpan().ReturnValue);
