@@ -41,7 +41,7 @@ namespace Lumigo.DotNET.Utilities
         JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
         {
             ContractResolver = new IgnoreStreamsResolver(),
-//            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
 
 
