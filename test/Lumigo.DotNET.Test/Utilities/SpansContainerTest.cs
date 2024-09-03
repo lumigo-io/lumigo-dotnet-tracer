@@ -80,5 +80,32 @@ namespace Lumigo.DotNET.Test.Utilities
             //Assert
             Assert.Equal(901, spansContainer.GetHttpSpans().Count);
         }
+
+        [Fact]
+        public async void End_Should_Handle_Circular_References()
+        {
+            // Arrange
+            var spansContainer = SpansContainer.GetInstance();
+            spansContainer.Init(new Reporter(), new EmptyContext(), new EmptyEvent());
+
+            var circularObject1 = new CircularReferenceClass();
+            var circularObject2 = new CircularReferenceClass();
+            circularObject1.Reference = circularObject2;
+            circularObject2.Reference = circularObject1;
+
+            // Act
+            spansContainer.End(circularObject1).GetAwaiter().GetResult();
+
+            // Assert
+            // Check that serialization completed without errors and does not contain circular reference errors
+            Assert.NotNull(spansContainer.GetEndSpan().ReturnValue);
+            Assert.DoesNotContain("Self referencing loop", spansContainer.GetEndSpan().ReturnValue);
+            Assert.Contains("Reference", spansContainer.GetEndSpan().ReturnValue);
+        }
+
+        class CircularReferenceClass
+        {
+            public CircularReferenceClass Reference { get; set; }
+        }
     }
 }

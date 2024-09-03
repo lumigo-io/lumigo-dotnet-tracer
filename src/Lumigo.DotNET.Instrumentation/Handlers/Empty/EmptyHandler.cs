@@ -7,7 +7,11 @@ namespace Lumigo.DotNET.Instrumentation.Handlers.Empty
 {
     public class EmptyHandler : BaseServiceHandler
     {
-        JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings { ContractResolver = new IgnoreStreamsResolver() };
+        JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new IgnoreStreamsResolver(),
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        };
 
         private string _serviceName;
 
