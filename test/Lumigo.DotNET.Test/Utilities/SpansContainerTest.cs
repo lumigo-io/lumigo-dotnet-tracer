@@ -107,5 +107,37 @@ namespace Lumigo.DotNET.Test.Utilities
         {
             public CircularReferenceClass Reference { get; set; }
         }
+
+        [Fact]
+        public async void End_Should_Handle_NonSerializable_Properties()
+        {
+            // Arrange
+            var spansContainer = SpansContainer.GetInstance();
+            spansContainer.Init(new Reporter(), new EmptyContext(), new EmptyEvent());
+
+            var objectWithNonSerializableProperties = new NonSerializablePropertiesClass
+            {
+                Name = "TestObject",
+                ExecutionContext = new System.Threading.ExecutionContext(),
+                TaskProperty = Task.CompletedTask
+            };
+
+            // Act
+            spansContainer.End(objectWithNonSerializableProperties).GetAwaiter().GetResult();
+
+            // Assert
+            // Check that serialization completed without errors and does not contain execution context or task-related errors
+            Assert.NotNull(spansContainer.GetEndSpan().ReturnValue);
+            Assert.DoesNotContain("ExecutionContext", spansContainer.GetEndSpan().ReturnValue);
+            Assert.DoesNotContain("TaskProperty", spansContainer.GetEndSpan().ReturnValue);
+            Assert.Contains("TestObject", spansContainer.GetEndSpan().ReturnValue);
+        }
+
+        class NonSerializablePropertiesClass
+        {
+            public string Name { get; set; }
+            public System.Threading.ExecutionContext ExecutionContext { get; set; }
+            public Task TaskProperty { get; set; }
+        }
     }
 }
