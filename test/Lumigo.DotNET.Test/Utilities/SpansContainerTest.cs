@@ -119,7 +119,7 @@ namespace Lumigo.DotNET.Test.Utilities
             var objectWithNonSerializableProperties = new NonSerializablePropertiesClass
             {
                 Name = "TestObject",
-                ExecutionContext = new System.Threading.ExecutionContext(),
+                ExecutionContext = ExecutionContext.Capture(),
                 TaskProperty = Task.CompletedTask
             };
 
