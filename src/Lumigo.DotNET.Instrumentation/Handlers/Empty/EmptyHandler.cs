@@ -9,9 +9,19 @@ namespace Lumigo.DotNET.Instrumentation.Handlers.Empty
     {
         JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
         {
-            ContractResolver = new IgnoreStreamsResolver(),
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            ContractResolver = new DynamicIgnoreResolver(),
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Error = HandleSerializationError
         };
+
+        private void HandleSerializationError(object sender, ErrorEventArgs args)
+        {
+            var currentError = args.ErrorContext.Error.Message;
+            Logger.LogWarning($"Serialization error: {currentError}");
+
+            // Ignore the error and continue serialization
+            args.ErrorContext.Handled = true;
+        }
 
         private string _serviceName;
 
