@@ -39,12 +39,25 @@ namespace Lumigo.DotNET.Utilities
         private List<ExecutionTag> ExecutionTags = new List<ExecutionTag>();
 
         private static SpansContainer OurInstance = new SpansContainer();
-        JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        private JsonSerializerSettings _jsonSerializerSettings;
+
+        // Property with lazy initialization
+        private JsonSerializerSettings JsonSerializerSettings
         {
-            ContractResolver = new DynamicIgnoreResolver(),
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            Error = (sender, args) => HandleSerializationError(sender, args)
-        };
+            get
+            {
+                if (_jsonSerializerSettings == null)
+                {
+                    _jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        ContractResolver = new DynamicIgnoreResolver(),
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        Error = HandleSerializationError
+                    };
+                }
+                return _jsonSerializerSettings;
+            }
+        }
 
         private void HandleSerializationError(object sender, ErrorEventArgs args)
         {
