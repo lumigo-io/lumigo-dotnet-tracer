@@ -143,7 +143,7 @@ namespace Lumigo.DotNET.Utilities
                 Type = FUNCTION_SPAN_TYPE,
                 Readiness = AwsUtils.GetFunctionReadiness(),
                 Envs = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EnvUtil.GetAll()) : null,
-                Event = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EventParserFactory.ParseEvent(evnt), jsonSerializerSettings) : null
+                Event = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EventParserFactory.ParseEvent(evnt), JsonSerializerSettings) : null
 
             };
             Logger.LogDebug("Finish Init Span");
@@ -169,7 +169,7 @@ namespace Lumigo.DotNET.Utilities
         {
             Logger.LogDebug(response.ToString());
             BaseSpan.Id = BaseSpan.Id.Replace("_started", "");
-            BaseSpan.ReturnValue = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(response, jsonSerializerSettings) : null;
+            BaseSpan.ReturnValue = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(response, JsonSerializerSettings) : null;
             await End(BaseSpan);
         }
         public async Task End()
@@ -324,7 +324,7 @@ namespace Lumigo.DotNET.Utilities
                         StatusCode = executionContext?.ResponseContext?.HttpResponse?.StatusCode == null ? 0 : (int)executionContext?.ResponseContext?.HttpResponse?.StatusCode,
                         Method = executionContext?.RequestContext?.Request?.HttpMethod,
                         Uri = executionContext?.RequestContext?.Request?.Endpoint?.AbsoluteUri,
-                        Body = result != null ? JsonConvert.SerializeObject(result, jsonSerializerSettings) : null
+                        Body = result != null ? JsonConvert.SerializeObject(result, JsonSerializerSettings) : null
                     }
                 };
                 HttpSpans.Add(httpSpan);
