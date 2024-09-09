@@ -98,6 +98,28 @@ namespace Lumigo.DotNET.Utilities
                 Logger.LogError(e, "Failed to log init data");
             }
 
+            string Envs;
+            try
+            {
+                Envs = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EnvUtil.GetAll()) : null;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(e, "Failed to capture environment variables");
+                Envs = "";
+            }
+
+            string Event;
+            try
+            {
+                Event = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EventParserFactory.ParseEvent(evnt), JsonSerializerSettings) : null;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(e, "Failed to capture event");
+                event = "";
+            }
+
             this.Clear();
             this.Reporter = reporter;
             var awsTracerId = EnvUtil.GetEnv(AMZN_TRACE_ID);
@@ -142,29 +164,8 @@ namespace Lumigo.DotNET.Utilities
                 },
                 Type = FUNCTION_SPAN_TYPE,
                 Readiness = AwsUtils.GetFunctionReadiness(),
-
-                string Envs;
-                try
-                {
-                    Envs = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EnvUtil.GetAll()) : null,
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(e, "Failed to capture environment variables");
-                    Envs = "";
-                }
-
-                string Event;
-                try
-                {
-                    Event = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EventParserFactory.ParseEvent(evnt), JsonSerializerSettings) : null
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(e, "Failed to capture event");
-                    event = "";
-                }
-
+                Envs = Envs,
+                Event = Event,
             };
             Logger.LogDebug("Finish Init Span");
         }
