@@ -52,7 +52,7 @@ namespace Lumigo.DotNET.Utilities
                     {
                         ContractResolver = new DynamicIgnoreResolver(),
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-//                        Error = HandleSerializationError
+                        Error = HandleSerializationError
                     };
                 }
                 return _jsonSerializerSettings;
