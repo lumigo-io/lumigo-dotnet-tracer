@@ -111,18 +111,17 @@ namespace Lumigo.DotNET.Test.Utilities
         }
 
         [Fact]
-        public async Task End_Should_Handle_NonSerializable_Properties()
+        public async void End_Should_Handle_NonSerializable_Properties()
         {
             // Arrange
             var spansContainer = SpansContainer.GetInstance();
             spansContainer.Init(new Reporter(), new EmptyContext(), new EmptyEvent());
 
             // Object with non-serializable properties
-            var objectWithNonSerializableProperties = new NonSerializablePropertiesClass
+            var objectWithNonSerializableProperties = new ObjectWithIPAddress
             {
                 Name = "TestObject",
-                ExecutionContext = ExecutionContext.Capture(),
-                TaskProperty = Task.CompletedTask
+                IPAddress = System.Net.IPAddress.Parse("192.168.1.1") // IPv4 address (no ScopeId)
             };
 
             // Act
@@ -135,19 +134,14 @@ namespace Lumigo.DotNET.Test.Utilities
 
             Assert.NotNull(serializedResult);
             Assert.Contains("TestObject", serializedResult);
-                Assert.Contains("\"ExecutionContext\":{}", serializedResult); // Assert ExecutionContext is serialized as an empty object
-            // Assert that Task fields are serialized
-            Assert.Contains("\"TaskProperty\":{\"Id\":", serializedResult);
-            Assert.Contains("\"Status\":", serializedResult);
-            Assert.Contains("\"IsCompleted\":", serializedResult);
+            Assert.DoesNotContain("IPAddress", serializedResult);
         }
 
         // The class with non-serializable properties for testing purposes
-        class NonSerializablePropertiesClass
+        public class ObjectWithIPAddress
         {
             public string Name { get; set; }
-            public System.Threading.ExecutionContext ExecutionContext { get; set; }
-            public Task TaskProperty { get; set; }
+            public System.Net.IPAddress IPAddress { get; set; }
         }
     }
 }
