@@ -105,7 +105,7 @@ namespace Lumigo.DotNET.Utilities
             }
             catch (Exception ex)
             {
-                Logger.LogError(e, "Failed to capture environment variables");
+                Logger.LogError(ex, "Failed to capture environment variables");
                 Envs = "";
             }
 
@@ -116,7 +116,7 @@ namespace Lumigo.DotNET.Utilities
             }
             catch (Exception ex)
             {
-                Logger.LogError(e, "Failed to capture event");
+                Logger.LogError(ex, "Failed to capture event");
                 Event = "";
             }
 
@@ -196,7 +196,7 @@ namespace Lumigo.DotNET.Utilities
             }
             catch (Exception ex)
             {
-                Logger.LogError(e, "Failed to capture return-value");
+                Logger.LogError(ex, "Failed to capture return-value");
                 BaseSpan.ReturnValue = "";
             }
             await End(BaseSpan);
