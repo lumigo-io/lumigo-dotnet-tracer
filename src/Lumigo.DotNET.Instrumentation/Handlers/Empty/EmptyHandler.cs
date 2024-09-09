@@ -1,6 +1,7 @@
 ﻿using System;
 using Amazon.Runtime;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Lumigo.DotNET.Utilities.Extensions;
 
 namespace Lumigo.DotNET.Instrumentation.Handlers.Empty

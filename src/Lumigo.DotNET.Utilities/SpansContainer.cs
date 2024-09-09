@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Amazon.Runtime;
 using Amazon.Lambda.Core;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Lumigo.DotNET.Parser;
 using Lumigo.DotNET.Parser.Spans;
 using Lumigo.DotNET.Utilities.Models;
