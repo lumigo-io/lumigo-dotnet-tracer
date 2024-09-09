@@ -121,7 +121,7 @@ namespace Lumigo.DotNET.Test.Utilities
             var objectWithNonSerializableProperties = new ObjectWithIPAddress
             {
                 Name = "TestObject",
-                IPAddress = System.Net.IPAddress.Parse("192.168.1.1") // IPv4 address (no ScopeId)
+                IPAddress = System.Net.IPAddress.Parse("fe80::1%1") // IPv6 address with ScopeId
             };
 
             // Act
@@ -134,7 +134,7 @@ namespace Lumigo.DotNET.Test.Utilities
 
             Assert.NotNull(serializedResult);
             Assert.Contains("TestObject", serializedResult);
-            Assert.DoesNotContain("IPAddress", serializedResult);
+            Assert.DoesNotContain("IPAddress", serializedResult); // ScopeId should cause serialization to fail
         }
 
         // The class with non-serializable properties for testing purposes
