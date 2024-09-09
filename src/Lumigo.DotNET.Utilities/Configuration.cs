@@ -57,7 +57,7 @@ namespace Lumigo.DotNET.Utilities
 
         public string GetLumigoTracerVersion()
         {
-            return "1.0.50";  // Being updated from .bumpversion.cfg
+            return "1.0.51";  // Being updated from .bumpversion.cfg
         }
 
         public bool DebugMode
