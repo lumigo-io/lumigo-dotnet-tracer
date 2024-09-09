@@ -111,12 +111,13 @@ namespace Lumigo.DotNET.Test.Utilities
         }
 
         [Fact]
-        public async void End_Should_Handle_NonSerializable_Properties()
+        public async Task End_Should_Handle_NonSerializable_Properties()
         {
             // Arrange
             var spansContainer = SpansContainer.GetInstance();
             spansContainer.Init(new Reporter(), new EmptyContext(), new EmptyEvent());
 
+            // Object with non-serializable properties
             var objectWithNonSerializableProperties = new NonSerializablePropertiesClass
             {
                 Name = "TestObject",
@@ -125,16 +126,20 @@ namespace Lumigo.DotNET.Test.Utilities
             };
 
             // Act
-            spansContainer.End(objectWithNonSerializableProperties).GetAwaiter().GetResult();
+            // Call End on spansContainer to test the dynamic ignore functionality
+            await spansContainer.End(objectWithNonSerializableProperties);
 
             // Assert
-            // Check that serialization completed without errors and does not contain execution context or task-related errors
-            Assert.NotNull(spansContainer.GetEndSpan().ReturnValue);
-            Assert.DoesNotContain("ExecutionContext", spansContainer.GetEndSpan().ReturnValue);
-            Assert.DoesNotContain("TaskProperty", spansContainer.GetEndSpan().ReturnValue);
-            Assert.Contains("TestObject", spansContainer.GetEndSpan().ReturnValue);
+            // Check that the EndSpan contains the serialized result and non-serializable properties were ignored
+            var serializedResult = spansContainer.GetEndSpan().ReturnValue;
+
+            Assert.NotNull(serializedResult);
+            Assert.Contains("TestObject", serializedResult);
+            Assert.DoesNotContain("ExecutionContext", serializedResult);
+            Assert.DoesNotContain("TaskProperty", serializedResult);
         }
 
+        // The class with non-serializable properties for testing purposes
         class NonSerializablePropertiesClass
         {
             public string Name { get; set; }
