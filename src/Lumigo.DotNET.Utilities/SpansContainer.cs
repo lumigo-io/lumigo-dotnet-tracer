@@ -117,7 +117,7 @@ namespace Lumigo.DotNET.Utilities
             catch (Exception ex)
             {
                 Logger.LogError(e, "Failed to capture event");
-                event = "";
+                Event = "";
             }
 
             this.Clear();
