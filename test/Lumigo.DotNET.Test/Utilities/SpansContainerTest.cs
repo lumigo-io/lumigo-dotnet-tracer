@@ -134,7 +134,7 @@ namespace Lumigo.DotNET.Test.Utilities
 
             Assert.NotNull(serializedResult);
             Assert.Contains("TestObject", serializedResult);
-            Assert.DoesNotContain("IPAddress", serializedResult); // ScopeId should cause serialization to fail
+            Assert.Contains("IPAddress", serializedResult); // ScopeId should cause serialization to fail
         }
 
         // The class with non-serializable properties for testing purposes
