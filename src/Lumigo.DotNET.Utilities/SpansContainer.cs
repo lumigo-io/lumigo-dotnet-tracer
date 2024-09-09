@@ -61,8 +61,7 @@ namespace Lumigo.DotNET.Utilities
 
         private void HandleSerializationError(object sender, ErrorEventArgs args)
         {
-            var currentError = args.ErrorContext.Error.Message;
-            Logger.LogError(e, "Failed to Serialize JSON");
+            Logger.LogError(args.ErrorContext.Error, "Failed to Serialize JSON");
 
             // Ignore the error and continue serialization
             args.ErrorContext.Handled = true;
