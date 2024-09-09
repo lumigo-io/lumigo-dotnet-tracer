@@ -50,7 +50,7 @@ namespace Lumigo.DotNET.Utilities
                 {
                     _jsonSerializerSettings = new JsonSerializerSettings
                     {
-                        ContractResolver = new DynamicIgnoreResolver(),
+//                        ContractResolver = new DynamicIgnoreResolver(),
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         Error = HandleSerializationError
                     };
