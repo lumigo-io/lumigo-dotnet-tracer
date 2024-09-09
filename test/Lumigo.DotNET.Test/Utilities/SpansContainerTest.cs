@@ -135,8 +135,11 @@ namespace Lumigo.DotNET.Test.Utilities
 
             Assert.NotNull(serializedResult);
             Assert.Contains("TestObject", serializedResult);
-            Assert.DoesNotContain("ExecutionContext", serializedResult);
-            Assert.DoesNotContain("TaskProperty", serializedResult);
+                Assert.Contains("\"ExecutionContext\":{}", serializedResult); // Assert ExecutionContext is serialized as an empty object
+            // Assert that Task fields are serialized
+            Assert.Contains("\"TaskProperty\":{\"Id\":", serializedResult);
+            Assert.Contains("\"Status\":", serializedResult);
+            Assert.Contains("\"IsCompleted\":", serializedResult);
         }
 
         // The class with non-serializable properties for testing purposes
