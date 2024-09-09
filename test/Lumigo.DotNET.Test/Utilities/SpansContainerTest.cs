@@ -117,29 +117,31 @@ namespace Lumigo.DotNET.Test.Utilities
             var spansContainer = SpansContainer.GetInstance();
             spansContainer.Init(new Reporter(), new EmptyContext(), new EmptyEvent());
 
-            var objectWithNonSerializableProperties = new NonSerializablePropertiesClass
+            // Object with non-serializable properties
+            var objectWithNonSerializableProperties = new ObjectWithIPAddress
             {
                 Name = "TestObject",
-                ExecutionContext = ExecutionContext.Capture(),
-                TaskProperty = Task.CompletedTask
+                IPAddress = System.Net.IPAddress.Parse("fe80::1%1") // IPv6 address with ScopeId
             };
 
             // Act
-            spansContainer.End(objectWithNonSerializableProperties).GetAwaiter().GetResult();
+            // Call End on spansContainer to test the dynamic ignore functionality
+            await spansContainer.End(objectWithNonSerializableProperties);
 
             // Assert
-            // Check that serialization completed without errors and does not contain execution context or task-related errors
-            Assert.NotNull(spansContainer.GetEndSpan().ReturnValue);
-            Assert.DoesNotContain("ExecutionContext", spansContainer.GetEndSpan().ReturnValue);
-            Assert.DoesNotContain("TaskProperty", spansContainer.GetEndSpan().ReturnValue);
-            Assert.Contains("TestObject", spansContainer.GetEndSpan().ReturnValue);
+            // Check that the EndSpan contains the serialized result and non-serializable properties were ignored
+            var serializedResult = spansContainer.GetEndSpan().ReturnValue;
+
+            Assert.NotNull(serializedResult);
+            Assert.Contains("TestObject", serializedResult);
+            Assert.Contains("IPAddress", serializedResult); // ScopeId should cause serialization to fail
         }
 
-        class NonSerializablePropertiesClass
+        // The class with non-serializable properties for testing purposes
+        public class ObjectWithIPAddress
         {
             public string Name { get; set; }
-            public System.Threading.ExecutionContext ExecutionContext { get; set; }
-            public Task TaskProperty { get; set; }
+            public System.Net.IPAddress IPAddress { get; set; }
         }
     }
 }

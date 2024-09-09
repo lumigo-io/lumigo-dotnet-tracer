@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Amazon.Runtime;
 using Amazon.Lambda.Core;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Lumigo.DotNET.Parser;
 using Lumigo.DotNET.Parser.Spans;
 using Lumigo.DotNET.Utilities.Models;
@@ -38,12 +39,34 @@ namespace Lumigo.DotNET.Utilities
         private List<ExecutionTag> ExecutionTags = new List<ExecutionTag>();
 
         private static SpansContainer OurInstance = new SpansContainer();
-        JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new IgnoreStreamsResolver(),
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-        };
+        private JsonSerializerSettings _jsonSerializerSettings;
 
+        // Property with lazy initialization
+        private JsonSerializerSettings JsonSerializerSettings
+        {
+            get
+            {
+                if (_jsonSerializerSettings == null)
+                {
+                    _jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        ContractResolver = new DynamicIgnoreResolver(),
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        Error = HandleSerializationError
+                    };
+                }
+                return _jsonSerializerSettings;
+            }
+        }
+
+        private void HandleSerializationError(object sender, ErrorEventArgs args)
+        {
+            var currentError = args.ErrorContext.Error.Message;
+            Logger.LogDebug("Failed to Serialize JSON" + currentError);
+
+            // Ignore the error and continue serialization
+            args.ErrorContext.Handled = true;
+        }
 
         public static SpansContainer GetInstance()
         {
@@ -73,6 +96,28 @@ namespace Lumigo.DotNET.Utilities
             } catch (Exception e)
             {
                 Logger.LogError(e, "Failed to log init data");
+            }
+
+            string Envs;
+            try
+            {
+                Envs = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EnvUtil.GetAll()) : null;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to capture environment variables");
+                Envs = "";
+            }
+
+            string Event;
+            try
+            {
+                Event = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EventParserFactory.ParseEvent(evnt), JsonSerializerSettings) : null;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to capture event");
+                Event = "";
             }
 
             this.Clear();
@@ -119,9 +164,8 @@ namespace Lumigo.DotNET.Utilities
                 },
                 Type = FUNCTION_SPAN_TYPE,
                 Readiness = AwsUtils.GetFunctionReadiness(),
-                Envs = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EnvUtil.GetAll()) : null,
-                Event = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(EventParserFactory.ParseEvent(evnt), jsonSerializerSettings) : null
-
+                Envs = Envs,
+                Event = Event,
             };
             Logger.LogDebug("Finish Init Span");
         }
@@ -146,7 +190,15 @@ namespace Lumigo.DotNET.Utilities
         {
             Logger.LogDebug(response.ToString());
             BaseSpan.Id = BaseSpan.Id.Replace("_started", "");
-            BaseSpan.ReturnValue = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(response, jsonSerializerSettings) : null;
+            try
+            {
+                BaseSpan.ReturnValue = Configuration.GetInstance().IsLumigoVerboseMode() ? JsonConvert.SerializeObject(response, JsonSerializerSettings) : null;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to capture return-value");
+                BaseSpan.ReturnValue = "";
+            }
             await End(BaseSpan);
         }
         public async Task End()
@@ -301,7 +353,7 @@ namespace Lumigo.DotNET.Utilities
                         StatusCode = executionContext?.ResponseContext?.HttpResponse?.StatusCode == null ? 0 : (int)executionContext?.ResponseContext?.HttpResponse?.StatusCode,
                         Method = executionContext?.RequestContext?.Request?.HttpMethod,
                         Uri = executionContext?.RequestContext?.Request?.Endpoint?.AbsoluteUri,
-                        Body = result != null ? JsonConvert.SerializeObject(result, jsonSerializerSettings) : null
+                        Body = result != null ? JsonConvert.SerializeObject(result, JsonSerializerSettings) : null
                     }
                 };
                 HttpSpans.Add(httpSpan);
